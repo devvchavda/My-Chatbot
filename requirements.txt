@@ -7,3 +7,4 @@ typing-extensions
 langgraph.checkpoint.sqlite
 matplotlib
 speechRecognition
+pyaudio
