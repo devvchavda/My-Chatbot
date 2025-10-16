@@ -53,8 +53,7 @@ def render_sidebar():
                 st.session_state.current_chat_id = chat_id
         
         st.markdown("---")
-        audio_bytes = st.audio_input("Record a voice message:")
-        
+        audio_bytes = st.audio_input("Record voice message:",key=f"audio_widget_{st.session_state.get('audio_counter', 0)}")
     return audio_bytes
 
 def create_download_link(file_path: str, label: str = None) -> str:
@@ -128,4 +127,5 @@ if "current_chat_id" in st.session_state:
                     elif isinstance(message, ToolMessage):
                         st.info("Using Appropriate tool")
                     response_placeholder.markdown(full_response + " ")
+                    st.session_state.audio_counter = st.session_state.get("audio_counter", 0) + 1
                 st.rerun()
