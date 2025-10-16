@@ -5,7 +5,6 @@ from chat_langraph import system, workflow, HumanMessage, AIMessage, get_all_cha
 import uuid
 import base64
 import speech_recognition as sr
-from st_audiorec import st_audiorec
 import io
 
 st.set_page_config(layout="wide")
@@ -39,7 +38,6 @@ def load_session_state():
 
 def render_sidebar():
     with st.sidebar:
-        audio_bytes = st_audiorec()
         st.title("Chats")
         if st.button("➕ New Chat"):
             new_id = str(uuid.uuid4())
@@ -49,17 +47,20 @@ def render_sidebar():
             workflow.update_state(config, {"messages": [system]})
             st.session_state.chat_dict[new_id] = "New Chat"
             st.rerun()
+
         for chat_id in st.session_state.chats:
             if st.button(st.session_state.chat_dict.get(chat_id, "New Chat"), key=chat_id):
                 st.session_state.current_chat_id = chat_id
+        
+        st.markdown("---")
+        audio_bytes = st.audio_input("Record a voice message:")
+        
     return audio_bytes
 
 def create_download_link(file_path: str, label: str = None) -> str:
-    if not os.path.exists(file_path):
-        return ""
+    if not os.path.exists(file_path): return ""
     try:
-        with open(file_path, "rb") as f:
-            data = f.read()
+        with open(file_path, "rb") as f: data = f.read()
         b64 = base64.b64encode(data).decode()
         label = label or f"📥 Download {os.path.basename(file_path)}"
         href = f'<a href="data:file/octet-stream;base64,{b64}" download="{os.path.basename(file_path)}">{label}</a>'
@@ -68,39 +69,32 @@ def create_download_link(file_path: str, label: str = None) -> str:
         return f"Error creating download link: {e}"
 
 def loadchats():
-    if "current_chat_id" not in st.session_state:
-        return []
+    if "current_chat_id" not in st.session_state: return []
     config = {"configurable": {"thread_id": st.session_state.current_chat_id}}
     state = workflow.get_state(config)
     messages = state.values.get("messages", [])
     for message in messages:
-        if(not message.content):
-            continue
+        if not message.content: continue
         if isinstance(message, HumanMessage):
-            with st.chat_message("human"):
-                st.write(message.content)
+            with st.chat_message("human"): st.write(message.content)
         elif isinstance(message, AIMessage):
-            with st.chat_message("assistant"):
-                st.write(message.content)
+            with st.chat_message("assistant"): st.write(message.content)
         elif isinstance(message, ToolMessage):
             with st.chat_message("assistant"):
                 st.info("Using Appropriate tool")
-                if(message.name == "plot_graph" and "Filepath" in message.content):
-                    st.image(message.content.split(":")[1] , "📊")
-                if("Filepath" in message.content):
-                    st.markdown(create_download_link(message.content.split(":")[1]) , True)
-
+                if message.name == "plot_graph" and "Filepath" in message.content:
+                    st.image(message.content.split(":")[1], "📊")
+                if "Filepath" in message.content:
+                    st.markdown(create_download_link(message.content.split(":")[1]), unsafe_allow_html=True)
     return messages
-
-# --- Main Chat Flow ---
 
 load_session_state()
 audio_bytes = render_sidebar()
 
 if "current_chat_id" in st.session_state:
     loadchats()
-    user_input = st.chat_input("Your message:")
-
+    
+    user_input = ""
     if audio_bytes:
         st.toast("Processing audio...")
         wav_io = io.BytesIO(audio_bytes)
@@ -108,27 +102,30 @@ if "current_chat_id" in st.session_state:
         try:
             with sr.AudioFile(wav_io) as source:
                 audio_data = r.record(source)
-            text = r.recognize_google(audio_data)
-            user_input = text
-        except Exception as E:
-            st.toast("Try again some error occoured")
+            user_input = r.recognize_google(audio_data)
+        except Exception as e:
+            st.error(f"Could not process audio. Please try again. Error: {e}")
+
+    text_input = st.chat_input("Your message:")
+    if text_input:
+        user_input = text_input
 
     if user_input:
         with st.chat_message("human"):
             st.write(user_input)
 
         with st.chat_message("assistant"):
-            response_placeholder = st.empty()
-            full_response = ""
-            for message, metadata in workflow.stream(
-                {"messages": [system, HumanMessage(user_input)]},
-                config={"configurable": {"thread_id": st.session_state.current_chat_id}},
-                stream_mode="messages",
-            ):
-                tool_link = ""
-                if isinstance(message, AIMessage):
-                    full_response += message.content or ""
-                elif isinstance(message, ToolMessage):
-                    st.info("Using Appropriate tool")
-                response_placeholder.markdown(full_response + " ")
-        st.rerun()
+            with st.spinner("Assistant is thinking..."):
+                response_placeholder = st.empty()
+                full_response = ""
+                for message, metadata in workflow.stream(
+                    {"messages": [system, HumanMessage(user_input)]},
+                    config={"configurable": {"thread_id": st.session_state.current_chat_id}},
+                    stream_mode="messages",
+                ):
+                    if isinstance(message, AIMessage):
+                        full_response += message.content or ""
+                    elif isinstance(message, ToolMessage):
+                        st.info("Using Appropriate tool")
+                    response_placeholder.markdown(full_response + " ")
+                st.rerun()
