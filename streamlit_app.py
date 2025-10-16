@@ -97,7 +97,7 @@ if "current_chat_id" in st.session_state:
     user_input = ""
     if audio_bytes:
         st.toast("Processing audio...")
-        wav_io = io.BytesIO(audio_bytes)
+        wav_io = io.BytesIO(audio_bytes.read())
         r = st.session_state.recognizer
         try:
             with sr.AudioFile(wav_io) as source:
