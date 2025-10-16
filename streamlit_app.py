@@ -6,8 +6,7 @@ import streamlit as st
 from chat_langraph import system, workflow, HumanMessage, AIMessage, get_all_chat_ids, ToolMessage
 import uuid
 import base64
-# import pyttsx3 
-
+import speech_recognition as sr 
 st.set_page_config(layout="wide")
 st.title("My Chatbot")
 
@@ -15,10 +14,7 @@ TEMP_DIR = "/tmp"
 os.makedirs(TEMP_DIR, exist_ok=True)
 
 
-# --- Helpers ---
-# if ("speaker" not in st.session_state):
-#     st.session_state.speaker = pyttsx3.init()
-# st.session_state.tospeak = False
+
 
 def set_title(messages):
     if messages:
@@ -31,6 +27,8 @@ def set_config():
 
 
 def load_session_state():
+    if "recognizer" not in st.session_state:
+        st.session_state.recognizer = sr.Recognizer()
     if "chats" not in st.session_state:
         st.session_state.chats = get_all_chat_ids()
     if "current_chat_id" not in st.session_state:
@@ -46,6 +44,7 @@ def load_session_state():
 
 def render_sidebar():
     with st.sidebar:
+        st.button("🎙️" , key="mic")
         st.title("Chats")
         if st.button("➕ New Chat"):
             new_id = str(uuid.uuid4())
@@ -112,6 +111,16 @@ render_sidebar()
 if "current_chat_id" in st.session_state:
     loadchats()
     user_input = st.chat_input("Your message:")
+    if st.session_state.mic:
+        r = st.session_state.recognizer
+        with sr.Microphone() as source :
+            try:
+                st.toast("Listening speak now :")
+                audio = r.listen(source , timeout=20 , phrase_time_limit=200)
+                text = r.recognize_google(audio)
+                user_input = text
+            except Exception as E:
+                st.toast("Try again some error occoured")
     if user_input :
         with st.chat_message("human"):
             st.write(user_input)
@@ -131,6 +140,3 @@ if "current_chat_id" in st.session_state:
                     st.info("Using Appropriate tool")
                 response_placeholder.markdown(full_response + " ")
         st.rerun() 
-            # if(st.session_state.tospeak):
-            #     st.session_state.speaker.say(full_response)
-            #     st.session_state.runAndWait()
