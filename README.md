@@ -40,8 +40,8 @@ Follow these instructions to set up and run the project on your local machine.
 
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/your-username/your-repository-name.git](https://github.com/your-username/your-repository-name.git)
-    cd your-repository-name
+    git clone [https://github.com/devvchavda/My-Chatbot](https://github.com/devvchavda/My-Chatbot)
+    cd My-Chatbot
     ```
 
 2.  **Create and activate a virtual environment:**
@@ -69,7 +69,7 @@ Follow these instructions to set up and run the project on your local machine.
 
 5.  **Run the application:**
     ```bash
-    streamlit run app.py
+    streamlit run streamlit_app.py
     ```
     Open your browser and navigate to `http://localhost:8501`.
 
