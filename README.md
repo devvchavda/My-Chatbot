@@ -11,7 +11,7 @@ A powerful and intelligent chatbot built with **Streamlit**, **LangGraph**, and 
 ## ✨ Features
 
 * **🗣️ Voice & Text Input**: Interact with the chatbot via typing or speaking.
-* **🧠 Intelligent Backend**: Powered by LangGraph to manage complex conversational flows and state.
+* **🧠Backend**: Powered by LangGraph to manage complex conversational flows and state.
 * **🛠️ Tool Integration**: The agent can use custom tools to generate plots, create downloadable files, and perform other actions.
 * **💬 Multi-Chat History**: Seamlessly create and switch between multiple conversations, with all history saved.
 * **🚀 Real-time Streaming**: Responses are streamed token-by-token for a dynamic user experience.
