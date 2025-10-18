@@ -4,7 +4,6 @@ import streamlit as st
 from chat_langraph import system, workflow, HumanMessage, AIMessage, get_all_chat_ids, ToolMessage
 import uuid
 import base64
-import speech_recognition as sr
 import io
 
 st.set_page_config(layout="wide")
@@ -53,8 +52,6 @@ def render_sidebar():
                 st.session_state.current_chat_id = chat_id
         
         st.markdown("---")
-        audio_bytes = st.audio_input("Record voice message:",key=f"audio_widget_{st.session_state.get('audio_counter', 0)}")
-    return audio_bytes
 
 def create_download_link(file_path: str, label: str = None) -> str:
     if not os.path.exists(file_path): return ""
@@ -88,29 +85,11 @@ def loadchats():
     return messages
 
 load_session_state()
-audio_bytes = render_sidebar()
 
 if "current_chat_id" in st.session_state:
     loadchats()
     
-    user_input = ""
-    if audio_bytes:
-        st.toast("Processing audio...")
-        wav_io = io.BytesIO(audio_bytes.read())
-        r = st.session_state.recognizer
-        try:
-            with sr.AudioFile(wav_io) as source:
-                audio_data = r.record(source)
-                user_input = r.recognize_google(audio_data)
-                if isinstance(user_input, list):
-                    user_input = " ".join(user_input)
-        except Exception as e:
-            st.error(f"Could not process audio. Please try again. Error: {e}")
-
-    text_input = st.chat_input("Your message:")
-    if text_input:
-        user_input = text_input
-
+    user_input = st.chat_input("Your message:")
     if user_input:
         with st.chat_message("human"):
             st.write(user_input)
@@ -132,5 +111,4 @@ if "current_chat_id" in st.session_state:
                     elif isinstance(message, ToolMessage):
                         st.info("Using Appropriate tool")
                     response_placeholder.markdown(full_response + " ")
-                    st.session_state.audio_counter = st.session_state.get("audio_counter", 0) + 1
                 st.rerun()
