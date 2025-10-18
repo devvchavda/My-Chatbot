@@ -22,7 +22,6 @@ A powerful and intelligent chatbot built with **Streamlit**, **LangGraph**, and 
 * **Frontend**: Streamlit
 * **Backend & Orchestration**: LangGraph
 * **Language Model**: Google Gemini 
-* **Speech-to-Text**: Speech recognition library of python is used . 
 
 ***
 
