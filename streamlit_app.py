@@ -102,6 +102,8 @@ if "current_chat_id" in st.session_state:
             with sr.AudioFile(wav_io) as source:
                 audio_data = r.record(source)
                 user_input = r.recognize_google(audio_data)
+                if isinstance(user_input, list):
+                    user_input = " ".join(user_input)
         except Exception as e:
             st.error(f"Could not process audio. Please try again. Error: {e}")
 
