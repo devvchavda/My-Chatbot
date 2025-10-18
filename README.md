@@ -1,4 +1,4 @@
-# 🤖 Conversational AI with LangGraph & Streamlit
+# 🤖My Chatbot Project
 
 A powerful and intelligent chatbot built with **Streamlit**, **LangGraph**, and **Google Gemini**. This application features a responsive user interface, supports both text and voice input, and leverages powerful tools to provide dynamic responses, including file generation and data visualization.
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://my-chatbot-almc.onrender.com/) ← **Try it here!**
