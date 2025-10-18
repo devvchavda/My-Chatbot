@@ -21,8 +21,6 @@ def set_config():
     return {"configurable": {"thread_id": st.session_state.current_chat_id}}
 
 def load_session_state():
-    if "recognizer" not in st.session_state:
-        st.session_state.recognizer = sr.Recognizer()
     if "chats" not in st.session_state:
         st.session_state.chats = get_all_chat_ids()
     if "current_chat_id" not in st.session_state:
