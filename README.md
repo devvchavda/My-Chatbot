@@ -12,8 +12,7 @@ A powerful and intelligent chatbot built with **Streamlit**, **LangGraph**, and 
 
 * **🗣️ Voice & Text Input**: Interact with the chatbot via typing or speaking.
 * **🧠Backend**: Powered by LangGraph to manage complex conversational flows and state.
-* **🛠️ Tool Integration**: The agent can use custom tools to generate plots, create downloadable files, and perform other actions.
-* **💬 Multi-Chat History**: Seamlessly create and switch between multiple conversations, with all history saved.
+* **🛠️ Tool Integration**: The agent can use custom tools to generate plots, create code files which are also available for the user to download , Searching on web and etc. 
 * **🚀 Real-time Streaming**: Responses are streamed token-by-token for a dynamic user experience.
 
 ***
@@ -22,8 +21,8 @@ A powerful and intelligent chatbot built with **Streamlit**, **LangGraph**, and 
 
 * **Frontend**: Streamlit
 * **Backend & Orchestration**: LangGraph
-* **Language Model**: Google Gemini
-* **Speech-to-Text**: `streamlit-audiorec` & `speech-recognition`
+* **Language Model**: Google Gemini 
+* **Speech-to-Text**: Speech recognition library of python is used . 
 
 ***
 
@@ -75,6 +74,4 @@ Follow these instructions to set up and run the project on your local machine.
 
 ***
 
-## 📄 License
 
-This project is licensed under the MIT License. See the `LICENSE` file for more details.
