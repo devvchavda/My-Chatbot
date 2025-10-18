@@ -125,7 +125,10 @@ if "current_chat_id" in st.session_state:
                     stream_mode="messages",
                 ):
                     if isinstance(message, AIMessage):
-                        full_response += message.content
+                        if isinstance(message.content, list):
+                            full_response += " ".join(message.content)
+                        else:
+                            full_response += message.content
                     elif isinstance(message, ToolMessage):
                         st.info("Using Appropriate tool")
                     response_placeholder.markdown(full_response + " ")
